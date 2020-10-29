@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "guiamobile",
-    "slug": "guiamobile",
+    "name": "guiaobras",
+    "slug": "guiaobras",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#313CA7"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -17,10 +17,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.pma.guiaobras",
+      "buildNumber": "1.0.0"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
+    "android": {
+      "package": "com.pma.guiaobras",
+      "versionCode": 1
     }
+   
   }
 }

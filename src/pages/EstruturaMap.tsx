@@ -1,16 +1,37 @@
-import React from 'react';
+import React,{useState} from 'react';
 
 import { StyleSheet, Text, View,Dimensions, TouchableOpacity,Platform,StatusBar } from 'react-native';
 import MapView,{Marker,Callout,PROVIDER_GOOGLE} from 'react-native-maps';
 import { Feather} from '@expo/vector-icons';
 import mapMarker from '../images/map-marker.png';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation,useFocusEffect } from '@react-navigation/native';
+import api from '../services/api';
+
+interface Estrutura{
+  id:number;
+  name:string;
+  latitude:number;
+  longitude:number;
+}
+
 export default function EstruturaMap(){
 
+    const [estruturas,setEstruturas] = useState<Estrutura[]>([]);
     const navegation = useNavigation();
 
-    function handleNavigationEstruturaDetails(){
-      navegation.navigate('EstruturaDetails');
+
+    useFocusEffect(() =>{
+      api.get('estruturas').then(respoonse=>{
+        setEstruturas(respoonse.data);
+      });
+    });
+
+    function handleNavigationEstruturaDetails(id:number){
+      navegation.navigate('EstruturaDetails',{id});
+    }
+
+    function handleNavegationToCreateEstrutura(){
+      navegation.navigate('SelectMapPosistion');
     }
 
 
@@ -19,35 +40,41 @@ export default function EstruturaMap(){
         <MapView style={styles.map} initialRegion={{
             latitude:-21.4224861,
             longitude:-45.9581008,
-            latitudeDelta: 0.008,
-            longitudeDelta: 0.008,
+            latitudeDelta: 0.04,
+            longitudeDelta: 0.04,
         }} 
         >
-           
-           <Marker
-              icon={mapMarker}
-              calloutAnchor={{
-                x:3.0,
-                y:1.0,
-              }}
-              coordinate ={{
-               latitude:-21.4224861,
-               longitude:-45.9581008,
-              }}
-           >
-              <Callout tooltip onPress={handleNavigationEstruturaDetails}>
-                <View style={styles.calloutContainer}>
-                   <Text style={styles.calloutText}>Obras 1 de cada</Text>
-                  
-                </View>
-              </Callout>
-           </Marker>
+         {estruturas.map(estrutura =>{
+           return(
+            
+            <Marker
+            key={estrutura.id}
+            icon={mapMarker}
+            calloutAnchor={{
+              x:3.0,
+              y:1.0,
+            }}
+            coordinate ={{
+             latitude:estrutura.latitude,
+             longitude:estrutura.longitude,
+            }}
+         >
+            <Callout tooltip onPress={()=>{handleNavigationEstruturaDetails(estrutura.id)}}>
+              <View style={styles.calloutContainer}>
+                 <Text style={styles.calloutText}>Obras 1 de cada</Text>
+                
+              </View>
+            </Callout>
+         </Marker>
+
+           );
+         })}
       
         </MapView>
    
         <View style={styles.footer}>
-          <Text style={styles.footerText}>2 Obras encontradas</Text>
-          <TouchableOpacity style={styles.createEstruturaButton} onPress={()=>{}}>
+          <Text style={styles.footerText}>{estruturas.length} Obras encontradas</Text>
+          <TouchableOpacity style={styles.createEstruturaButton} onPress={handleNavegationToCreateEstrutura}>
         <Feather name="plus" size={20} color="#fff"/>
           </TouchableOpacity>
         </View>
